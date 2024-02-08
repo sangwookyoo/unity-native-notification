@@ -1,0 +1,11 @@
+{
+  "name": "com.sangwookyoo.native-notification",
+  "version": "1.0.0",
+  "displayName": "Unity Native Notification",
+  "description": "This Unity custom package provides a simple notification system for both macOS and Windows platforms using native UI elements.",
+  "author": {
+    "name": "Sangwook Yoo",
+    "email": "tkddnr032@gmail.com",
+    "url": ""
+  }
+}
