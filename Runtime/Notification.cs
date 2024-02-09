@@ -23,7 +23,7 @@ namespace NativeAlert.Tools
 
         public static void Show(string message, string title)
         {
-#if UNITY_STANDALONE_OSX || UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         string script = $"display notification \"{message}\" with title \"{title}\"";
         ExecuteAppleScript(script);
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
