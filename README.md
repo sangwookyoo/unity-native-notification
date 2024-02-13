@@ -1,5 +1,12 @@
 ## Introduction
 This Unity custom package provides a simple notification system for both macOS and Windows platforms using native UI elements.
+- macOS
+  
+  <img width="372" alt="macOS" src="https://github.com/sangwookyoo/unity-native-notification/assets/61134850/820077cf-ebaa-46d6-ad39-c46850745146">
+
+- Windows
+  
+  <img width="372" alt="Windows" src="https://github.com/sangwookyoo/unity-native-notification/assets/61134850/95488ac1-f537-4de7-8f9d-88fd34751eec">
 
 ## Features
 - **Cross-platform:** Supports both macOS and Windows platforms.
