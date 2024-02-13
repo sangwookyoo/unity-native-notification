@@ -1,39 +1,20 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 
 namespace NativeAlert.Tools
 {
     public static class Notification
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr MessageBox(IntPtr hWnd, string text, string caption, uint type);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern bool IsIconic(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        private const int SW_RESTORE = 9;
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         private const string AppleScriptPath = "/usr/bin/osascript";
 
-        public static void Show(string message, string title)
+        public static void Show(string title, string message)
         {
-#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-        string script = $"display notification \"{message}\" with title \"{title}\"";
-        ExecuteAppleScript(script);
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            IntPtr hWnd = GetForegroundWindow();
-            MessageBox(hWnd, message, title, 0);
-            if (IsIconic(hWnd))
-            {
-                ShowWindow(hWnd, SW_RESTORE);
-            }
-#endif
+            string script = $"display notification \"{message}\" with title \"{title}\"";
+            ExecuteAppleScript(script);
         }
 
         private static void ExecuteAppleScript(string script)
@@ -52,5 +33,39 @@ namespace NativeAlert.Tools
             process.Start();
             process.WaitForExit();
         }
+#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        private static NotifyIcon _notifyIcon;
+
+        public static void Show(string title, string message, string iconPath = null)
+        {
+            InitializeNotifyIcon(iconPath);
+
+            _notifyIcon.BalloonTipTitle = title;
+            _notifyIcon.BalloonTipText = message;
+            _notifyIcon.ShowBalloonTip(3000);
+            _notifyIcon.BalloonTipClicked += OnBalloonTipDispose;
+            _notifyIcon.BalloonTipClosed += OnBalloonTipDispose;
+        }
+
+        private static void InitializeNotifyIcon(string iconPath)
+        {
+            _notifyIcon?.Dispose();
+            _notifyIcon = new NotifyIcon();
+            _notifyIcon.Visible = true;
+            _notifyIcon.Icon = SetIcon(iconPath);
+        }
+        
+        private static Icon SetIcon(string iconPath)
+        {
+            return iconPath != string.Empty
+                ? File.Exists(iconPath) ? new Icon(iconPath) : SystemIcons.Information
+                : SystemIcons.Information;
+        }
+        
+        private static void OnBalloonTipDispose(object sender, EventArgs e)
+        {
+            _notifyIcon?.Dispose();
+        }
+#endif
     }
 }
